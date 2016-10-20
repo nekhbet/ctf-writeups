@@ -1,0 +1,33 @@
+After "guessing" (a 30.7 MB pdf file containing only few characters and a small image) that the pdf has something embedded in it I started to use pdfdetach to extract the file: 
+
+pdfdetach simplepdf_f8004a3ad0acde31c40267b9856e63fc.pdf -saveall
+
+A new file was created pdf10000.pdf, then when I ran pdfdetach again and observed that it creates a file pdf9999.pdf and so on. The objective was to get to pdf0.pdf so a quick script solved it: 
+
+
+<?php 
+for ($i=10000; $i >= 0; $i--)
+{
+	$j = $i + 1;
+	if ($j < 10001)
+	{
+		exec("rm pdf$j.pdf");
+	}
+	exec("pdfdetach pdf$i.pdf -saveall");
+	echo $i."\n";
+}
+?>
+
+When it get to pdf0.pdf I ran it again
+
+pdfdetach pdf0.pdf -saveall
+
+And I got start.pdf, ran it again
+
+pdfdetach start.pdf -saveall
+
+but I got a file start.pdf with 0 bytes (and lost the original start.pdf, so be careful and backup it !). Something was wrong. I looked on the pdfdetach arguments and : 
+
+pdfdetach start.pdf -save 1 -o x.pdf
+
+Opened x.pdf and there was the flag :)
